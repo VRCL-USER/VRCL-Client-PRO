@@ -12,21 +12,25 @@ namespace VRCL.ClientPRO;
 
 public partial class MainWindow : Window
 {
-    private const string AppVersion = "v1.1.00";
+    private const string AppVersion = "v1.1.01";
     private static readonly Regex VrchatIdRegex = new(
         @"\b(?:avtr|usr|wrld)_[A-Za-z0-9-]+\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private readonly LocalLibraryService _library = new();
+    private readonly InstanceJournalService _instanceJournal = new();
+    private readonly ObservableCollection<InstanceObservation> _instanceEntries = [];
     private readonly ObservableCollection<AuthorizedAsset> _assets = [];
 
     public MainWindow()
     {
         InitializeComponent();
         AssetsDataGrid.ItemsSource = _assets;
+        InstanceJournalDataGrid.ItemsSource = _instanceEntries;
         Loaded += async (_, _) =>
         {
             await RefreshLibraryAsync();
+            await RefreshInstanceJournalAsync();
             AppendConsole($"VRCL PRO {AppVersion} ready.");
             AppendConsole("Type 'help' to see local commands.");
         };
@@ -69,6 +73,109 @@ public partial class MainWindow : Window
         {
             message = "Windows could not open the link: " + ex.Message;
             return false;
+        }
+    }
+
+    private async Task RefreshInstanceJournalAsync()
+    {
+        try
+        {
+            var entries = await _instanceJournal.LoadAsync();
+            _instanceEntries.Clear();
+            foreach (var entry in entries.OrderByDescending(x => x.SavedUtc))
+                _instanceEntries.Add(entry);
+            AppendConsole($"Loaded {_instanceEntries.Count} saved instance journal entr(y/ies).");
+        }
+        catch (Exception ex)
+        {
+            AppendConsole("INSTANCE JOURNAL ERROR: " + ex.Message);
+        }
+    }
+
+    private void ParseJournalLink_Click(object sender, RoutedEventArgs e)
+    {
+        var input = JournalInstanceLinkTextBox.Text.Trim();
+        if (!Uri.TryCreate(input, UriKind.Absolute, out var uri) ||
+            uri.Scheme != Uri.UriSchemeHttps ||
+            (!uri.Host.Equals("vrchat.com", StringComparison.OrdinalIgnoreCase) &&
+             !uri.Host.Equals("www.vrchat.com", StringComparison.OrdinalIgnoreCase)))
+        {
+            MessageBox.Show("Paste a valid HTTPS link hosted on vrchat.com.", "Invalid VRChat link",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var worldMatch = Regex.Match(input, @"wrld_[A-Za-z0-9-]+", RegexOptions.IgnoreCase);
+        if (worldMatch.Success)
+            JournalWorldIdTextBox.Text = worldMatch.Value;
+
+        var query = uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var item in query)
+        {
+            var parts = item.Split('=', 2);
+            if (parts.Length != 2)
+                continue;
+
+            var key = Uri.UnescapeDataString(parts[0]);
+            var value = Uri.UnescapeDataString(parts[1]);
+            if (key.Equals("instanceId", StringComparison.OrdinalIgnoreCase) ||
+                key.Equals("instance_id", StringComparison.OrdinalIgnoreCase))
+                JournalLocationIdTextBox.Text = value;
+            else if (key.Equals("worldId", StringComparison.OrdinalIgnoreCase) &&
+                     string.IsNullOrWhiteSpace(JournalWorldIdTextBox.Text))
+                JournalWorldIdTextBox.Text = value;
+        }
+
+        if (string.IsNullOrWhiteSpace(JournalLocationIdTextBox.Text))
+        {
+            var separator = input.IndexOf(':');
+            if (separator >= 0 && worldMatch.Success && separator > input.IndexOf(worldMatch.Value, StringComparison.Ordinal))
+                JournalLocationIdTextBox.Text = input[(separator + 1)..].Split('?', '&')[0];
+        }
+
+        AppendConsole($"Parsed supplied VRChat link. World ID: {EmptyAsDash(JournalWorldIdTextBox.Text)}; Location ID: {EmptyAsDash(JournalLocationIdTextBox.Text)}");
+        FooterStatusTextBlock.Text = "Parsed the link you supplied. No live instance scan was performed.";
+    }
+
+    private async void SaveInstanceEntry_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(JournalWorldNameTextBox.Text) &&
+                string.IsNullOrWhiteSpace(JournalWorldIdTextBox.Text) &&
+                string.IsNullOrWhiteSpace(JournalLocationIdTextBox.Text) &&
+                string.IsNullOrWhiteSpace(JournalInstanceLinkTextBox.Text) &&
+                string.IsNullOrWhiteSpace(JournalNotesTextBox.Text))
+            {
+                MessageBox.Show("Enter at least a world name, ID, instance link, or note before saving.",
+                    "Nothing to save", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var entry = await _instanceJournal.SaveAsync(
+                JournalInstanceLinkTextBox.Text,
+                JournalWorldNameTextBox.Text,
+                JournalWorldIdTextBox.Text,
+                JournalLocationIdTextBox.Text,
+                JournalUserIdsTextBox.Text,
+                JournalAvatarIdsTextBox.Text,
+                JournalNotesTextBox.Text);
+
+            _instanceEntries.Insert(0, entry);
+            AppendConsole($"Saved instance journal entry: {EmptyAsDash(entry.WorldName)} / {EmptyAsDash(entry.WorldId)}");
+            FooterStatusTextBlock.Text = "Instance details saved locally.";
+            JournalWorldNameTextBox.Clear();
+            JournalWorldIdTextBox.Clear();
+            JournalLocationIdTextBox.Clear();
+            JournalUserIdsTextBox.Clear();
+            JournalAvatarIdsTextBox.Clear();
+            JournalNotesTextBox.Clear();
+            JournalInstanceLinkTextBox.Clear();
+        }
+        catch (Exception ex)
+        {
+            AppendConsole("Could not save instance entry: " + ex.Message);
+            MessageBox.Show(ex.Message, "Instance journal error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -266,6 +373,8 @@ public partial class MainWindow : Window
             AppendConsole("  version              Show the application version.");
             AppendConsole("  library list         List local imported asset metadata.");
             AppendConsole("  library open         Open the local storage folder.");
+            AppendConsole("  instances list       List saved instance journal entries.");
+            AppendConsole("  instances open       Open the local data folder.");
             AppendConsole("  ids <text or link>   Parse avatar/user/world IDs from text you provide.");
             AppendConsole("  join <VRChat link>   Open an official VRChat link through the normal client handoff.");
             AppendConsole("  clear                Clear the console output.");
@@ -298,6 +407,22 @@ public partial class MainWindow : Window
         {
             _library.OpenFolder();
             AppendConsole("Opened: " + _library.RootDirectory);
+            return;
+        }
+
+        if (command.Equals("instances list", StringComparison.OrdinalIgnoreCase))
+        {
+            if (_instanceEntries.Count == 0)
+                AppendConsole("No instance journal entries have been saved.");
+            foreach (var entry in _instanceEntries)
+                AppendConsole($"{EmptyAsDash(entry.WorldName)} | {EmptyAsDash(entry.WorldId)} | {EmptyAsDash(entry.LocationId)} | {entry.SavedUtc:u}");
+            return;
+        }
+
+        if (command.Equals("instances open", StringComparison.OrdinalIgnoreCase))
+        {
+            Process.Start(new ProcessStartInfo(_instanceJournal.RootDirectory) { UseShellExecute = true });
+            AppendConsole("Opened local instance journal folder: " + _instanceJournal.RootDirectory);
             return;
         }
 
