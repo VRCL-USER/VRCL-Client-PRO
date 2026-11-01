@@ -1,32 +1,31 @@
-# Security and authorized use
+# Security and permitted use
 
-VRCL Client PRO is a local Windows desktop application. It is designed to manage files the operator owns or has explicit permission to use.
+VRCL PRO is a local Windows desktop application. Its asset library is intended for files already present on the user's computer and for assets the user owns or has permission to inspect and use.
 
-## Contributor authorization
+## VRChat integration
 
-- Record the contributor's name and relevant avatar ID where supplied.
-- Keep the permission document beside the imported file.
-- Describe the scope of permission in the import record.
-- Preserve a SHA-256 hash to identify the exact imported file.
-- Add revocation and deletion controls before distributing the app broadly.
-- A consent form records permission; it does not itself provide technical access to VRChat-hosted files.
+- Use the installed official VRChat client for account sign-in and instance-link handoff.
+- Do not collect or store VRChat passwords, browser cookies, session tokens, or authentication secrets.
+- Do not create an automated bot/crawler/scraper to access or search live VRChat instances or extract platform data.
+- Do not bypass avatar/world privacy settings, security mechanisms, or access controls.
+- Use only documented and permitted interfaces for future metadata integrations.
 
-## Acquisition
+The current VRChat Terms of Service expressly restrict bypassing platform security/access controls and using automated bots, crawlers, scrapers, or other automated means to access/search the Platform or extract data. A private or educational purpose does not itself grant an exception.
 
-The current import flow requires the user to select a local .vrca file and its accompanying permission document. The contributor must supply the file or provide it through a supported transfer mechanism.
+## Local asset imports
 
-Do not add functionality that bypasses VRChat privacy settings, scrapes live instances, circumvents platform access controls, or extracts protected files. Use documented and permitted interfaces for any future VRChat integration.
+The import screen lets the user select a local file and optional preview image. It supports `.vrca`, `.vrcw`, `.unitypackage`, and `.zip` files. The app calculates SHA-256 and stores metadata entered by the user, including optional user/avatar/world/location IDs.
 
-## Credentials
-
-- Do not collect or store VRChat passwords.
-- Do not collect browser cookies, session tokens, or authentication secrets.
-- Use the user's existing official VRChat client for account sign-in and instance handoff.
+The import checkbox is an operator attestation, not independent proof of ownership or permission. It does not provide access to platform-hosted files or override VRChat rules. Contributors must supply files or provide them through a supported transfer method.
 
 ## Local storage
 
-The application stores its catalog and imported files under:
+The application stores local data under:
 
 `%LOCALAPPDATA%\VRCL\ClientPRO`
 
-Do not commit creator files, permission documents, personal data, or local library metadata to GitHub.
+- `Assets\` — imported local files.
+- `Thumbnails\` — optional preview images.
+- `Library.json` — metadata and SHA-256 hashes.
+
+Do not commit local assets, private avatar files, preview images, personal metadata, or library contents to GitHub.
