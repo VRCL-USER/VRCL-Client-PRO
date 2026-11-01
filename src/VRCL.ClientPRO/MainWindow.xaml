@@ -1,4 +1,4 @@
-<Window x:Class="VRCL.ClientPRO.MainWindow"
+ <Window x:Class="VRCL.ClientPRO.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="VRCL Client PRO" Width="1120" Height="760" MinWidth="940" MinHeight="650"
@@ -72,7 +72,9 @@
                             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="AssetFileTextBox" IsReadOnly="True" VerticalContentAlignment="Center"/><Button Grid.Column="1" Content="Browse" Margin="8,4,0,10" Click="BrowseAsset_Click"/></Grid>
                             <Label Content="Signed permission document"/>
                             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="ConsentFileTextBox" IsReadOnly="True" VerticalContentAlignment="Center"/><Button Grid.Column="1" Content="Browse" Margin="8,4,0,10" Click="BrowseConsent_Click"/></Grid>
-                            <CheckBox x:Name="PermissionConfirmedCheckBox" Foreground="{StaticResource TextBrush}" TextWrapping="Wrap" Margin="0,12,0,16">I confirm the creator supplied this file or explicitly authorized its transfer, and the attached document records that permission.</CheckBox>
+                            <CheckBox x:Name="PermissionConfirmedCheckBox" Foreground="{StaticResource TextBrush}" Margin="0,12,0,16">
+                                <TextBlock Text="I confirm the creator supplied this file or explicitly authorized its transfer, and the attached document records that permission." TextWrapping="Wrap" Foreground="{StaticResource TextBrush}"/>
+                            </CheckBox>
                             <Button x:Name="ImportButton" Content="Import authorized asset" Height="42" Click="ImportAsset_Click"/>
                             <TextBlock x:Name="ImportStatusTextBlock" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
                             <Border Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="13" Margin="0,25,0,0">
