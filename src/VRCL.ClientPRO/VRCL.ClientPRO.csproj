@@ -8,6 +8,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>VRCL Client PRO</AssemblyName>
     <RootNamespace>VRCL.ClientPRO</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <InformationalVersion>v1.0.02</InformationalVersion>
   </PropertyGroup>
 </Project>
