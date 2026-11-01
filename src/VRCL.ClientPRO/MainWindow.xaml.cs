@@ -128,8 +128,13 @@ public partial class MainWindow : Window
 
         if (string.IsNullOrWhiteSpace(JournalLocationIdTextBox.Text))
         {
-            var separator = input.IndexOf(':');
-            if (separator >= 0 && worldMatch.Success && separator > input.IndexOf(worldMatch.Value, StringComparison.Ordinal))
+            var worldStart = worldMatch.Success
+                ? input.IndexOf(worldMatch.Value, StringComparison.Ordinal)
+                : -1;
+            var separator = worldStart >= 0
+                ? input.IndexOf(':', worldStart + worldMatch.Length)
+                : -1;
+            if (separator >= 0)
                 JournalLocationIdTextBox.Text = input[(separator + 1)..].Split('?', '&')[0];
         }
 
