@@ -4,7 +4,7 @@ A standalone, local-first Windows desktop companion for VRChat-related workflows
 
 **There is no Discord bot or cloud API.** The application does not ask for a VRChat password, browser cookie, or session token.
 
-## v1.1.00 features
+## v1.1.01 features
 
 - Purple wolf-style VRCL PRO application icon and rebranded desktop window.
 - Official VRChat instance/invite link handoff to the user's normal browser and installed client.
@@ -13,6 +13,9 @@ A standalone, local-first Windows desktop companion for VRChat-related workflows
 - Optional local preview image for an asset.
 - Local library with metadata, file paths, import dates, and SHA-256 file hashes.
 - In-app console with visible command output.
+- Local Instance Journal for world names, world IDs, location IDs, instance links, user IDs, avatar IDs, and notes.
+- Parse world and location identifiers from a VRChat link that you paste into the app.
+- Instance journal data stored separately in `Instances.json`.
 
 ## Console commands
 
@@ -20,6 +23,8 @@ A standalone, local-first Windows desktop companion for VRChat-related workflows
 - `version` — display the application version.
 - `library list` — list assets and the metadata saved in the local library.
 - `library open` — open the local VRCL storage directory.
+- `instances list` — list saved instance journal entries.
+- `instances open` — open the local data folder.
 - `ids <text or link>` — find `avtr_`, `usr_`, and `wrld_` identifiers in text that you provide.
 - `join <official VRChat link>` — open an HTTPS link on `vrchat.com` through the standard browser/client handoff.
 - `clear` — clear console output.
@@ -28,7 +33,7 @@ These are local application commands. They do not query or scrape live VRChat in
 
 ## Important VRChat integration boundary
 
-The current VRChat Terms of Service prohibit automated bots, crawlers, scrapers, or other automated means from accessing/searching the Platform or extracting data, and prohibit bypassing platform security or access-control features. Therefore, VRCL PRO does not create a bot that joins arbitrary instances, unlocks all avatars, harvests live avatar/world data, or extracts protected `.vrca`/`.vrcw` files from the Platform.
+The Instance Journal only stores details the user enters or parses from a link they provide; it does not inspect a live instance. The current VRChat Terms of Service prohibit automated bots, crawlers, scrapers, or other automated means from accessing/searching the Platform or extracting data, and prohibit bypassing platform security or access-control features. Therefore, VRCL PRO does not create a bot that joins arbitrary instances, unlocks all avatars, harvests live avatar/world data, or extracts protected `.vrca`/`.vrcw` files from the Platform.
 
 Creator permission is important, but it does not by itself provide an official technical API or override VRChat platform controls. The local library imports files already supplied to or present on the user's computer. Future integrations will use only documented and permitted interfaces.
 
