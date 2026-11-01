@@ -1,44 +1,44 @@
-# VRCL Client PRO roadmap
+# VRCL PRO roadmap
 
-## Phase 1 — Standalone desktop foundation
-- [x] WPF desktop application project
-- [x] Dark purple desktop interface
+## Phase 1 — Desktop foundation
+- [x] Standalone WPF Windows application
+- [x] Purple VRCL PRO branding and app icon
 - [x] Official VRChat link handoff
-- [x] Local creator-supplied .vrca import
-- [x] Attach signed contributor permission document
-- [x] SHA-256 hash and local JSON catalog
+- [x] Local asset import for files already on the PC
+- [x] Optional avatar, user, world, and location ID metadata
+- [x] Optional local preview images
+- [x] SHA-256 hashing and local JSON catalog
+- [x] In-app console and visible command output
 - [x] PowerShell run and self-contained publish scripts
-- [ ] Build and test on the user's Windows PC
+- [ ] Build and test v1.1.00 on the target Windows PC
 
-## Phase 2 — Asset library
-- [ ] Search, sort, and filter imported assets
-- [ ] Detail view for contributor, avatar ID, permission scope, hash, and file paths
-- [ ] Open/export a selected authorized file
-- [ ] Remove asset and associated consent record
-- [ ] Permission expiry and revocation status
-- [ ] Backup and restore local library
+## Phase 2 — Local asset workflows
+- [ ] SARs integration for locally supplied files the user is authorized to process
+- [ ] Asset details pane with hash, source file, metadata, and preview
+- [ ] Search, sort, and filters
+- [ ] Open/export selected files
+- [ ] Delete records and associated local files
+- [ ] Backup and restore library
 
-## Phase 3 — Authorized asset processing
-- [ ] Integrate SARs as an optional local tool for files the user is authorized to process
-- [ ] Validate file type, size, and integrity before processing
-- [ ] Show conversion progress and detailed logs
-- [ ] Preserve original file and provenance record
-- [ ] Never acquire protected files from live instances or bypass platform access controls
+## Phase 3 — Metadata and previews
+- [ ] Read metadata from local asset files where supported by a documented file format/tool
+- [ ] Preview extraction from local files where supported
+- [ ] Import/export metadata manifests
+- [ ] Add lookup through documented and permitted VRChat interfaces only, if available
 
-## Phase 4 — VRChat companion tools
-- [ ] Launch VRChat through the installed official client
+## Phase 4 — VRChat companion
 - [ ] Improve official instance/invite link handling
-- [ ] Add permitted instance information and local launch history
-- [ ] Add documented/approved avatar metadata lookup where available
-- [ ] Do not collect passwords, cookies, or session tokens
+- [ ] Local launch history and user-selected favorites
+- [ ] Display permitted metadata returned by supported interfaces
+- [ ] Keep official VRChat client sign-in and privacy controls in charge
 
-## Phase 5 — Quality and release
+## Phase 5 — Release quality
 - [ ] Unit tests for import, hashing, catalog, and deletion
-- [ ] App icon, installer, and update workflow
-- [ ] Error reporting and rotating local logs
+- [ ] Installer and update workflow
+- [ ] Error reporting and rotating logs
 - [ ] Code signing and release packaging
-- [ ] Accessibility and UI polish
+- [ ] UI polish and accessibility
 
 ## Scope note
 
-Creator consent is important and is recorded with every imported asset. Consent alone does not provide a platform API or technical access to a private avatar file. The app's acquisition workflow uses files supplied by the contributor or another supported transfer method. No live-instance scraping, private-avatar extraction, or access-control bypass is included.
+This project does not include an automated VRChat bot, live-instance scraping, avatar unlocking, access-control bypass, or extraction of protected platform assets. Contributor permission can be recorded as provenance, but local import requires a file already made available to the user through a supported transfer method.
