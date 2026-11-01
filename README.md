@@ -1,50 +1,49 @@
-# VRCL Client PRO
+# VRCL PRO
 
-A standalone, local-first Windows desktop companion for VRChat workflows. The application is built with WPF/C#, stores its library locally, and uses PowerShell scripts for development and publishing.
+A standalone, local-first Windows desktop companion for VRChat-related workflows. It is a WPF/C# application with local storage and PowerShell development/build scripts.
 
-**This project is not a Discord bot.** The desktop application does not require a Discord application, bot token, cloud API, or remote service.
+**There is no Discord bot or cloud API.** The application does not ask for a VRChat password, browser cookie, or session token.
 
-## Current desktop foundation
+## v1.1.00 features
 
-- Dark purple WPF desktop interface.
-- Official VRChat instance/invite link handoff to the user's browser and installed client.
-- Local import of creator-supplied `.vrca` files.
-- Required signed-permission document attached to each imported asset.
-- SHA-256 file hash and local audit metadata.
-- Searchable/displayable local asset catalog (initial version).
-- No VRChat passwords, cookies, or session tokens are collected or stored.
+- Purple wolf-style VRCL PRO application icon and rebranded desktop window.
+- Official VRChat instance/invite link handoff to the user's normal browser and installed client.
+- Local import of files already on the user's PC: `.vrca`, `.vrcw`, `.unitypackage`, and `.zip`.
+- Optional user ID, avatar ID, world name, world ID, location/instance ID, and notes.
+- Optional local preview image for an asset.
+- Local library with metadata, file paths, import dates, and SHA-256 file hashes.
+- In-app console with visible command output.
 
-The import workflow expects the contributor to provide the actual file, or to make it available through a supported transfer method. A permission document records consent; it does not create a technical API or override platform access controls. The app does not scrape live instances or bypass VRChat privacy restrictions.
+## Console commands
 
-## Project layout
+- `help` — list available local commands.
+- `version` — display the application version.
+- `library list` — list assets and the metadata saved in the local library.
+- `library open` — open the local VRCL storage directory.
+- `ids <text or link>` — find `avtr_`, `usr_`, and `wrld_` identifiers in text that you provide.
+- `join <official VRChat link>` — open an HTTPS link on `vrchat.com` through the standard browser/client handoff.
+- `clear` — clear console output.
 
-```text
-VRCL-Client-PRO/
-├── src/
-│   └── VRCL.ClientPRO/
-│       ├── Models/
-│       ├── Services/
-│       ├── App.xaml
-│       ├── MainWindow.xaml
-│       └── VRCL.ClientPRO.csproj
-├── scripts/
-│   ├── Build-VRCLClientPRO.ps1
-│   └── Run-VRCLClientPRO.ps1
-└── docs/
-    ├── ROADMAP.md
-    └── SECURITY.md
-```
+These are local application commands. They do not query or scrape live VRChat instances.
+
+## Important VRChat integration boundary
+
+The current VRChat Terms of Service prohibit automated bots, crawlers, scrapers, or other automated means from accessing/searching the Platform or extracting data, and prohibit bypassing platform security or access-control features. Therefore, VRCL PRO does not create a bot that joins arbitrary instances, unlocks all avatars, harvests live avatar/world data, or extracts protected `.vrca`/`.vrcw` files from the Platform.
+
+Creator permission is important, but it does not by itself provide an official technical API or override VRChat platform controls. The local library imports files already supplied to or present on the user's computer. Future integrations will use only documented and permitted interfaces.
+
+See [VRChat Terms of Service](https://hello.vrchat.com/legal), [VRChat Public SDK API](https://creators.vrchat.com/sdk/public-sdk-api/), and [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Requirements
 
 - Windows 10/11 x64
-- .NET 10 SDK (Windows desktop workload/components)
+- .NET 10 SDK
 - PowerShell 5.1 or newer
 
 ## Run from source
 
 1. Download or clone this repository.
-2. Install the .NET 10 SDK from the official Microsoft .NET download page.
+2. Install the .NET 10 SDK.
 3. Open PowerShell in the repository root.
 4. Run:
 
@@ -60,13 +59,11 @@ From the repository root, run:
 .\scripts\Build-VRCLClientPRO.ps1
 ```
 
-The self-contained x64 publish output will be written to:
+The self-contained x64 executable is written to:
 
 ```text
-dist\win-x64\VRCL Client PRO.exe
+dist\win-x64\VRCL PRO.exe
 ```
-
-The self-contained build includes the .NET runtime, so the target PC does not need to install .NET separately.
 
 ## Local data
 
@@ -76,14 +73,26 @@ User data is stored under:
 %LOCALAPPDATA%\VRCL\ClientPRO
 ```
 
-- `Assets\` — creator-supplied avatar files.
-- `Consents\` — accompanying permission documents.
-- `Library.json` — local asset metadata and SHA-256 hashes.
+- `Assets\` — local asset files imported into the library.
+- `Thumbnails\` — optional local preview images.
+- `Library.json` — asset metadata and SHA-256 hashes.
 
-## Planned work
+Do not commit private assets, personal metadata, or local library files to GitHub.
 
-See [docs/ROADMAP.md](docs/ROADMAP.md). Planned areas include improved asset metadata inspection, revocation/deletion workflows, SARs integration for files the user is authorized to process, permitted VRChat metadata, and instance-management improvements.
+## Project layout
 
-## Security and permitted use
-
-See [docs/SECURITY.md](docs/SECURITY.md). Do not commit private creator files, signed permission documents, credentials, or personal data to this repository.
+```text
+VRCL-Client-PRO/
+├── src/VRCL.ClientPRO/
+│   ├── Assets/vrcl-pro.ico
+│   ├── Models/
+│   ├── Services/
+│   ├── App.xaml
+│   ├── MainWindow.xaml
+│   └── VRCL.ClientPRO.csproj
+├── scripts/
+│   ├── Build-VRCLClientPRO.ps1
+│   └── Run-VRCLClientPRO.ps1
+├── docs/
+└── VERSION, CHANGELOG.md, VERSIONING.md
+```
