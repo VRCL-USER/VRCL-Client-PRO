@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.01 — 2026-11-01
+
+- Added an Instance Journal for saving world names, world IDs, location/instance IDs, supplied instance links, user IDs, avatar IDs, and notes locally.
+- Added parsing of world and instance identifiers from a VRChat link supplied by the user.
+- Added `instances list` and `instances open` console commands.
+- Instance entries are stored separately in `%LOCALAPPDATA%\\VRCL\\ClientPRO\\Instances.json`.
+- Clarified that the journal records user-supplied observations and does not scan or monitor live instances.
+
+
 All notable changes to VRCL PRO are recorded here. Every code change or fix intended for a new build receives a version increment.
 
 ## v1.1.00 — 2026-11-01
