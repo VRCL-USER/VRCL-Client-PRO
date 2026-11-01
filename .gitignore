@@ -1,29 +1,31 @@
+# .NET / WPF
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+dist/
+artifacts/
+publish/
+
+# Local application data / user files
+AppData/
+LocalData/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
 # Secrets and local configuration
 .env
 .env.*
 !.env.example
 *.pem
 *.key
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
-.venv/
-venv/
-
-# Local application data
-data/
-*.sqlite
-*.sqlite3
-*.db
-logs/
-*.log
 
 # IDE / OS
 .vscode/
