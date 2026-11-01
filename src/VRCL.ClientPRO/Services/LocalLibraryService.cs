@@ -13,19 +13,36 @@ public sealed class LocalLibraryService
         PropertyNameCaseInsensitive = true
     };
 
+    private static readonly HashSet<string> SupportedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".vrca",
+        ".vrcw",
+        ".unitypackage",
+        ".zip"
+    };
+
+    private static readonly HashSet<string> SupportedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".bmp"
+    };
+
     public string RootDirectory { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "VRCL",
         "ClientPRO");
 
     private string AssetsDirectory => Path.Combine(RootDirectory, "Assets");
-    private string ConsentsDirectory => Path.Combine(RootDirectory, "Consents");
+    private string ThumbnailsDirectory => Path.Combine(RootDirectory, "Thumbnails");
     private string CatalogPath => Path.Combine(RootDirectory, "Library.json");
 
     public LocalLibraryService()
     {
         Directory.CreateDirectory(AssetsDirectory);
-        Directory.CreateDirectory(ConsentsDirectory);
+        Directory.CreateDirectory(ThumbnailsDirectory);
     }
 
     public async Task<List<AuthorizedAsset>> LoadAsync(CancellationToken cancellationToken = default)
@@ -39,34 +56,50 @@ public sealed class LocalLibraryService
     }
 
     public async Task<AuthorizedAsset> ImportAsync(
-        string assetName,
-        string contributorName,
-        string contributorUserId,
-        string avatarId,
-        string permissionScope,
+        string assetType,
+        string? assetName,
+        string? userId,
+        string? avatarId,
+        string? worldName,
+        string? worldId,
+        string? locationId,
+        string? notes,
         string sourceAssetPath,
-        string sourceConsentPath,
+        string? sourceThumbnailPath,
         CancellationToken cancellationToken = default)
     {
-        ValidateInput(assetName, nameof(assetName));
-        ValidateInput(contributorName, nameof(contributorName));
-        ValidateInput(permissionScope, nameof(permissionScope));
+        if (!File.Exists(sourceAssetPath))
+            throw new InvalidOperationException("Select an existing local asset file.");
 
-        if (!File.Exists(sourceAssetPath) ||
-            !string.Equals(Path.GetExtension(sourceAssetPath), ".vrca", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Select an existing .vrca file supplied by the authorized contributor.");
+        var extension = Path.GetExtension(sourceAssetPath);
+        if (!SupportedExtensions.Contains(extension))
+            throw new InvalidOperationException("Supported local asset formats are .vrca, .vrcw, .unitypackage, and .zip.");
 
-        if (!File.Exists(sourceConsentPath))
-            throw new InvalidOperationException("Select the contributor's signed permission document.");
+        if (!string.IsNullOrWhiteSpace(sourceThumbnailPath))
+        {
+            if (!File.Exists(sourceThumbnailPath))
+                throw new InvalidOperationException("The selected preview image could not be found.");
+
+            var imageExtension = Path.GetExtension(sourceThumbnailPath);
+            if (!SupportedImageExtensions.Contains(imageExtension))
+                throw new InvalidOperationException("Preview images must be PNG, JPG, JPEG, WEBP, or BMP.");
+        }
 
         var recordId = Guid.NewGuid().ToString("N");
-        var storedAssetPath = Path.Combine(AssetsDirectory, recordId + Path.GetExtension(sourceAssetPath));
-        var storedConsentPath = Path.Combine(ConsentsDirectory, recordId + Path.GetExtension(sourceConsentPath));
+        var storedAssetPath = Path.Combine(AssetsDirectory, recordId + extension);
+        var storedThumbnailPath = string.Empty;
 
         try
         {
             File.Copy(sourceAssetPath, storedAssetPath, overwrite: false);
-            File.Copy(sourceConsentPath, storedConsentPath, overwrite: false);
+
+            if (!string.IsNullOrWhiteSpace(sourceThumbnailPath))
+            {
+                storedThumbnailPath = Path.Combine(
+                    ThumbnailsDirectory,
+                    recordId + Path.GetExtension(sourceThumbnailPath));
+                File.Copy(sourceThumbnailPath, storedThumbnailPath, overwrite: false);
+            }
 
             await using var fileStream = File.OpenRead(storedAssetPath);
             var hashBytes = await SHA256.HashDataAsync(fileStream, cancellationToken);
@@ -75,28 +108,39 @@ public sealed class LocalLibraryService
             var record = new AuthorizedAsset
             {
                 RecordId = recordId,
-                AssetName = assetName.Trim(),
-                ContributorName = contributorName.Trim(),
-                ContributorUserId = contributorUserId.Trim(),
-                AvatarId = avatarId.Trim(),
-                PermissionScope = permissionScope.Trim(),
+                AssetType = string.IsNullOrWhiteSpace(assetType) ? "Other" : assetType.Trim(),
+                AssetName = string.IsNullOrWhiteSpace(assetName)
+                    ? Path.GetFileNameWithoutExtension(sourceAssetPath)
+                    : assetName.Trim(),
+                SourceFileName = Path.GetFileName(sourceAssetPath),
+                UserId = userId?.Trim() ?? string.Empty,
+                AvatarId = avatarId?.Trim() ?? string.Empty,
+                WorldName = worldName?.Trim() ?? string.Empty,
+                WorldId = worldId?.Trim() ?? string.Empty,
+                LocationId = locationId?.Trim() ?? string.Empty,
+                Notes = notes?.Trim() ?? string.Empty,
                 StoredAssetPath = storedAssetPath,
-                StoredConsentPath = storedConsentPath,
+                ThumbnailPath = storedThumbnailPath,
                 Sha256 = hash,
                 ImportedUtc = DateTime.UtcNow
             };
 
             var records = await LoadAsync(cancellationToken);
             records.Insert(0, record);
+
             var temporaryPath = CatalogPath + "." + recordId + ".tmp";
-            await File.WriteAllTextAsync(temporaryPath, JsonSerializer.Serialize(records, JsonOptions), cancellationToken);
+            await File.WriteAllTextAsync(
+                temporaryPath,
+                JsonSerializer.Serialize(records, JsonOptions),
+                cancellationToken);
             File.Move(temporaryPath, CatalogPath, overwrite: true);
+
             return record;
         }
         catch
         {
             TryDelete(storedAssetPath);
-            TryDelete(storedConsentPath);
+            TryDelete(storedThumbnailPath);
             throw;
         }
     }
@@ -111,14 +155,11 @@ public sealed class LocalLibraryService
         });
     }
 
-    private static void ValidateInput(string value, string fieldName)
+    private static void TryDelete(string? path)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException($"The {fieldName} field is required.", fieldName);
-    }
+        if (string.IsNullOrWhiteSpace(path))
+            return;
 
-    private static void TryDelete(string path)
-    {
         try
         {
             if (File.Exists(path))
