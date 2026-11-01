@@ -12,6 +12,10 @@ VRCL PRO is a local Windows desktop application. Its asset library is intended f
 
 The current VRChat Terms of Service expressly restrict bypassing platform security/access controls and using automated bots, crawlers, scrapers, or other automated means to access/search the Platform or extract data. A private or educational purpose does not itself grant an exception.
 
+## Instance Journal
+
+The Instance Journal stores world names, world IDs, location/instance IDs, links, user IDs, avatar IDs, and notes entered by the user or parsed from a link the user provides. It is a local notebook, not a live instance monitor or data collector.
+
 ## Local asset imports
 
 The import screen lets the user select a local file and optional preview image. It supports `.vrca`, `.vrcw`, `.unitypackage`, and `.zip` files. The app calculates SHA-256 and stores metadata entered by the user, including optional user/avatar/world/location IDs.
