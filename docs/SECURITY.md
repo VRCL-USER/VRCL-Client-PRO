@@ -1,36 +1,32 @@
 # Security and authorized use
 
-This repository is designed for assets the operator owns or has explicit permission to manage.
+VRCL Client PRO is a local Windows desktop application. It is designed to manage files the operator owns or has explicit permission to use.
 
-## Non-negotiable boundaries
+## Contributor authorization
 
-- Do not bypass VRChat privacy settings, access controls, or avatar visibility restrictions.
-- Do not extract, download, or redistribute another person's private avatar files without explicit authorization from the rights holder.
-- Do not collect VRChat passwords, browser cookies, session tokens, or authentication secrets.
-- Do not automate account logins or impersonate a user to obtain content.
-- Use documented, permitted interfaces for any future VRChat metadata integration.
-- Keep authorization evidence with each asset before enabling import, storage, or download features.
+- Record the contributor's name and relevant avatar ID where supplied.
+- Keep the permission document beside the imported file.
+- Describe the scope of permission in the import record.
+- Preserve a SHA-256 hash to identify the exact imported file.
+- Add revocation and deletion controls before distributing the app broadly.
+- A consent form records permission; it does not itself provide technical access to VRChat-hosted files.
 
-## Secrets
+## Acquisition
 
-- Keep tokens in a local `.env` file. It is ignored by Git.
-- Never paste bot tokens or API secrets into Discord messages, issues, or source files.
-- Rotate a token immediately if it is exposed.
-- Use a dedicated Discord bot account and grant only the permissions required by its commands.
-- Use HTTPS and a proper secrets manager before exposing the API to the internet.
+The current import flow requires the user to select a local .vrca file and its accompanying permission document. The contributor must supply the file or provide it through a supported transfer mechanism.
 
-## Current implementation
+Do not add functionality that bypasses VRChat privacy settings, scrapes live instances, circumvents platform access controls, or extracts protected files. Use documented and permitted interfaces for any future VRChat integration.
 
-The initial API stores agent heartbeats and an asset metadata table. The asset listing endpoint returns only rows explicitly marked `authorized = 1`. There is not yet an upload, file-serving, avatar-extraction, or VRChat-account integration endpoint.
+## Credentials
 
-The Windows agent only sends a heartbeat. It does not crawl folders, inspect running VRChat processes, collect credentials, or transfer files.
+- Do not collect or store VRChat passwords.
+- Do not collect browser cookies, session tokens, or authentication secrets.
+- Use the user's existing official VRChat client for account sign-in and instance handoff.
 
-## Before enabling file features
+## Local storage
 
-1. Require an explicit user action to select a local file.
-2. Record who owns the asset and why the operator is authorized to use it.
-3. Validate file type, size, and content before processing.
-4. Store files outside the web root with non-guessable identifiers.
-5. Require authentication and per-user authorization for every download.
-6. Log administrative actions without logging secrets.
-7. Add retention and deletion controls.
+The application stores its catalog and imported files under:
+
+`%LOCALAPPDATA%\VRCL\ClientPRO`
+
+Do not commit creator files, permission documents, personal data, or local library metadata to GitHub.
