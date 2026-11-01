@@ -10,7 +10,9 @@
 - [x] SHA-256 hashing and local JSON catalog
 - [x] In-app console and visible command output
 - [x] PowerShell run and self-contained publish scripts
-- [ ] Build and test v1.1.00 on the target Windows PC
+- [x] Local instance journal for user-supplied instance details
+- [x] Parse world and instance identifiers from pasted VRChat links
+- [ ] Build and test v1.1.01 on the target Windows PC
 
 ## Phase 2 — Local asset workflows
 - [ ] SARs integration for locally supplied files the user is authorized to process
@@ -25,6 +27,7 @@
 - [ ] Preview extraction from local files where supported
 - [ ] Import/export metadata manifests
 - [ ] Add lookup through documented and permitted VRChat interfaces only, if available
+- [ ] Add a supported metadata provider integration only after confirming its documented permissions and terms
 
 ## Phase 4 — VRChat companion
 - [ ] Improve official instance/invite link handling
@@ -41,4 +44,4 @@
 
 ## Scope note
 
-This project does not include an automated VRChat bot, live-instance scraping, avatar unlocking, access-control bypass, or extraction of protected platform assets. Contributor permission can be recorded as provenance, but local import requires a file already made available to the user through a supported transfer method.
+This project does not include an automated VRChat bot, live-instance scraping, avatar unlocking, access-control bypass, or extraction of protected platform assets. The Instance Journal records only details entered by the user or parsed from links they supply. Contributor permission can be recorded as provenance, but local import requires a file already made available to the user through a supported transfer method.
