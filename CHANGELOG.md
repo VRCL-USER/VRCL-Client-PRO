@@ -2,6 +2,10 @@
 
 All notable changes to VRCL Client PRO are recorded here. New application changes and fixes receive a version increment.
 
+## v1.0.03 — 2026-11-01
+
+- Corrected the desktop window XAML after the version-title change so the root Window attributes are valid.
+
 ## v1.0.02 — 2026-11-01
 
 - Fixed the missing `System.IO` namespace in the local asset library service.
