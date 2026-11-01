@@ -1,6 +1,18 @@
 # Changelog
 
-All notable changes to VRCL Client PRO are recorded here. New application changes and fixes receive a version increment.
+All notable changes to VRCL PRO are recorded here. Every code change or fix intended for a new build receives a version increment.
+
+## v1.1.00 — 2026-11-01
+
+- Rebranded the desktop window and executable as **VRCL PRO**.
+- Added a custom purple wolf-style VRCL PRO Windows application icon.
+- Reworked local import so it no longer asks for contributor names or signed documents.
+- Added local imports for .vrca, .vrcw, .unitypackage, and .zip files already on the computer.
+- Added optional user ID, avatar ID, world name, world ID, and location/instance ID fields.
+- Added optional local preview image support.
+- Expanded the local library to show asset type, IDs, world metadata, preview images, and import time.
+- Added an in-app command console with visible output: help, version, library list/open, ID parsing from user-supplied text, and official VRChat link handoff.
+- Kept live platform scraping, automated VRChat bots, avatar unlocking, and protected asset extraction out of scope.
 
 ## v1.0.03 — 2026-11-01
 
@@ -17,6 +29,6 @@ All notable changes to VRCL Client PRO are recorded here. New application change
 
 ## v1.0.00 — 2026-11-01
 
-- Established the standalone WPF desktop application foundation.
-- Added the initial dark-themed overview, official VRChat link handoff, contributor-authorized asset import, consent-document storage, SHA-256 hashing, and local asset library.
+- Established the initial standalone WPF desktop application foundation.
+- Added the initial dark-themed overview, official VRChat link handoff, local asset import, SHA-256 hashing, and local asset library.
 - Added PowerShell development-run and self-contained Windows publish scripts.
