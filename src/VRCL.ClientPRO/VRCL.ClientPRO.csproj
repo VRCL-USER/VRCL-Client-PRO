@@ -6,11 +6,15 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>VRCL Client PRO</AssemblyName>
+    <AssemblyName>VRCL PRO</AssemblyName>
     <RootNamespace>VRCL.ClientPRO</RootNamespace>
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <InformationalVersion>v1.0.03</InformationalVersion>
+    <ApplicationIcon>Assets\vrcl-pro.ico</ApplicationIcon>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>v1.1.00</InformationalVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\vrcl-pro.ico" />
+  </ItemGroup>
 </Project>
