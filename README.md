@@ -1,113 +1,89 @@
 # VRCL Client PRO
 
-A starter monorepo for a Discord bot, FastAPI service, Windows companion agent, and lightweight dashboard for managing **user-owned or explicitly authorized VRChat assets**.
+A standalone, local-first Windows desktop companion for VRChat workflows. The application is built with WPF/C#, stores its library locally, and uses PowerShell scripts for development and publishing.
 
-> **Important:** This project does not extract private avatars, bypass VRChat access controls, harvest session tokens, or download other users' assets without permission. The initial version provides service status and a safe foundation for authorized workflows. VRChat integration and asset importing are intentionally not implemented yet.
+**This project is not a Discord bot.** The desktop application does not require a Discord application, bot token, cloud API, or remote service.
+
+## Current desktop foundation
+
+- Dark purple WPF desktop interface.
+- Official VRChat instance/invite link handoff to the user's browser and installed client.
+- Local import of creator-supplied `.vrca` files.
+- Required signed-permission document attached to each imported asset.
+- SHA-256 file hash and local audit metadata.
+- Searchable/displayable local asset catalog (initial version).
+- No VRChat passwords, cookies, or session tokens are collected or stored.
+
+The import workflow expects the contributor to provide the actual file, or to make it available through a supported transfer method. A permission document records consent; it does not create a technical API or override platform access controls. The app does not scrape live instances or bypass VRChat privacy restrictions.
 
 ## Project layout
 
 ```text
 VRCL-Client-PRO/
-├── agent/
-│   └── main.py            # Windows companion; sends outbound heartbeats
-├── backend/
-│   └── main.py            # FastAPI service and SQLite metadata catalog
-├── bot/
-│   └── main.py            # Discord slash commands
-├── dashboard/
-│   └── index.html         # Lightweight API status page
-├── docs/
-│   ├── ROADMAP.md
-│   └── SECURITY.md
-├── .env.example
-├── .gitignore
-└── requirements.txt
+├── src/
+│   └── VRCL.ClientPRO/
+│       ├── Models/
+│       ├── Services/
+│       ├── App.xaml
+│       ├── MainWindow.xaml
+│       └── VRCL.ClientPRO.csproj
+├── scripts/
+│   ├── Build-VRCLClientPRO.ps1
+│   └── Run-VRCLClientPRO.ps1
+└── docs/
+    ├── ROADMAP.md
+    └── SECURITY.md
 ```
 
 ## Requirements
 
-- Windows 10/11 or another OS for development
-- Python 3.11 or newer
-- A Discord application and bot token for the Discord bot
-- A Discord server where you have permission to add the bot
+- Windows 10/11 x64
+- .NET 10 SDK (Windows desktop workload/components)
+- PowerShell 5.1 or newer
 
-The API and agent can be tested without a Discord bot token.
+## Run from source
 
-## Setup (Windows)
-
-1. Clone this repository and open PowerShell in its folder.
-2. Create and activate a virtual environment:
-
-   ```powershell
-   py -3.11 -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-3. Install dependencies:
+1. Download or clone this repository.
+2. Install the .NET 10 SDK from the official Microsoft .NET download page.
+3. Open PowerShell in the repository root.
+4. Run:
 
    ```powershell
-   python -m pip install --upgrade pip
-   pip install -r requirements.txt
+   .\scripts\Run-VRCLClientPRO.ps1
    ```
 
-4. Copy the example environment file:
+## Build a standalone Windows executable
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-5. Edit `.env`. Set a long random `API_TOKEN`. Add `DISCORD_TOKEN` only when you are ready to run the bot. Never commit `.env` or share its values in chat.
-
-## Run the API
-
-From the repository root:
+From the repository root, run:
 
 ```powershell
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+.\scripts\Build-VRCLClientPRO.ps1
 ```
 
-Open [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) to check the service.
+The self-contained x64 publish output will be written to:
 
-## Run the Windows agent
-
-In a second terminal, from the repository root:
-
-```powershell
-python agent/main.py
+```text
+dist\win-x64\VRCL Client PRO.exe
 ```
 
-The agent makes outbound heartbeat requests to the API. It does not scan folders, collect credentials, or upload avatar files.
+The self-contained build includes the .NET runtime, so the target PC does not need to install .NET separately.
 
-## Run the Discord bot
+## Local data
 
-Set `DISCORD_TOKEN` in `.env`, invite the bot using only the permissions it needs (View Channels, Send Messages, Use Application Commands, Embed Links, and Read Message History), then run:
+User data is stored under:
 
-```powershell
-python bot/main.py
+```text
+%LOCALAPPDATA%\VRCL\ClientPRO
 ```
 
-Available starter slash commands:
+- `Assets\` — creator-supplied avatar files.
+- `Consents\` — accompanying permission documents.
+- `Library.json` — local asset metadata and SHA-256 hashes.
 
-- `/status` — checks whether the API is reachable.
-- `/assets` — lists authorized assets in the metadata catalog.
+## Planned work
 
-Set `DISCORD_GUILD_ID` in `.env` to your test server ID for faster command registration during development. Leave it blank to sync globally.
+See [docs/ROADMAP.md](docs/ROADMAP.md). Planned areas include improved asset metadata inspection, revocation/deletion workflows, SARs integration for files the user is authorized to process, permitted VRChat metadata, and instance-management improvements.
 
-## Dashboard
+## Security and permitted use
 
-Run a local static server from the repository root:
-
-```powershell
-python -m http.server 5500 --directory dashboard
-```
-
-Then open [http://127.0.0.1:5500](http://127.0.0.1:5500). The starter dashboard displays API health only; it deliberately does not expose API secrets in browser code.
-
-## Current limitations
-
-- Asset catalog starts empty. There is no asset upload/download endpoint yet.
-- The agent reports that it is online; it does not manipulate VRChat or Unity files.
-- VRChat account integration is not configured. Do not add passwords, cookies, or session tokens.
-- The API is intended for local development until authentication, HTTPS, deployment, and operational safeguards are reviewed.
-
-See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SECURITY.md](docs/SECURITY.md) before expanding the project.
+See [docs/SECURITY.md](docs/SECURITY.md). Do not commit private creator files, signed permission documents, credentials, or personal data to this repository.
