@@ -9,10 +9,10 @@
     <AssemblyName>VRCL PRO</AssemblyName>
     <RootNamespace>VRCL.ClientPRO</RootNamespace>
     <ApplicationIcon>Assets\vrcl-pro.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>v1.1.00</InformationalVersion>
+    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
+    <InformationalVersion>v1.1.01</InformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="Assets\vrcl-pro.ico" />
